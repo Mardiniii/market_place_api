@@ -19,9 +19,11 @@ gem 'devise'
 gem 'active_model_serializers'
 
 group :test do
-  gem "rspec-rails", "~> 2.14"
+  gem 'rspec-rails', '~> 3.5'
   gem "factory_girl_rails"
   gem 'ffaker'
+  gem 'database_cleaner'
+  gem "shoulda-matchers"
 end
 
 group :development, :test do
