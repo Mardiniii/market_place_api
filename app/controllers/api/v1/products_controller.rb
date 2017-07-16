@@ -16,7 +16,12 @@ class Api::V1::ProductsController < ApplicationController
   end
 
   def index
-    respond_with Product.all
+    products = if params[:product_ids].present?
+                 Product.find(params[:product_ids])
+               else
+                 Product.all
+               end
+    respond_with products
   end
 
   def update
