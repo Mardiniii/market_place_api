@@ -8,6 +8,8 @@ class User < ApplicationRecord
 
   before_create :generate_authentication_token!
 
+  has_many :products, dependent: :destroy
+
   def generate_authentication_token!
     loop do
       self.auth_token = Devise.friendly_token
