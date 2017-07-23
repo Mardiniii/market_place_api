@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  before_create :set_total!
+  before_validation :set_total!
 
   validates :total, presence: true,
                     numericality: { greater_than_or_equal_to: 0 }
