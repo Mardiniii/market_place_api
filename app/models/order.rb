@@ -15,9 +15,9 @@ class Order < ApplicationRecord
 
   def build_order_from_stock(product_ids_and_quantities)    
     product_ids_and_quantities.each do |product_id_and_quantity|
-      id, _quantity = product_id_and_quantity # [1,5]
+      id, quantity = product_id_and_quantity # [1,5]
 
-      self.placements.build(product_id: id)
+      placements.build(product_id: id, quantity: quantity)
     end
   end
 end
