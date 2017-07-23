@@ -11,7 +11,10 @@ class Order < ApplicationRecord
   has_many :products, through: :placements
 
   def set_total!
-    self.total = products.map(&:price).sum
+    self.total = 0
+    placements.each do |placement|
+      self.total += placement.product.price * placement.quantity
+    end
   end
 
   def build_order_from_stock(product_ids_and_quantities)    

@@ -76,14 +76,20 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
 
   describe '#set_total!' do
     before(:each) do
-      product_one = FactoryGirl.create :product, price: 100
-      product_two = FactoryGirl.create :product, price: 85
+      product_one = FactoryGirl.create :product, price: 100, quantity: 1000
+      product_two = FactoryGirl.create :product, price: 85, quantity: 1000
 
-      @order = FactoryGirl.build :order, product_ids: [product_one.id, product_two.id]
+      placement_one = FactoryGirl.build :placement, product: product_one, quantity: 3
+      placement_two = FactoryGirl.build :placement, product: product_two, quantity: 15
+
+      @order = FactoryGirl.build :order
+
+      @order.placements << placement_one
+      @order.placements << placement_two
     end
 
     it 'returns the total amount to pay for the products' do
-      expect{ @order.set_total! }.to change{ @order.total }.from(0).to(185)
+      expect{@order.set_total!}.to change{@order.total.to_f}.from(0).to(1575)
     end
   end
 
