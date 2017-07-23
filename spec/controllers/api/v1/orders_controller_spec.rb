@@ -102,4 +102,23 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       }.to change{ order.placements.size }.from(0).to(2)
     end
   end
+
+  describe '#valid?' do
+    before do
+      product_one = FactoryGirl.create :product, price: 100, quantity: 5
+      product_two = FactoryGirl.create :product, price: 85, quantity: 10
+
+      placement_one = FactoryGirl.build :placement, product: product_one, quantity: 3
+      placement_two = FactoryGirl.build :placement, product: product_two, quantity: 15
+
+      @order = FactoryGirl.build :order
+
+      @order.placements << placement_one
+      @order.placements << placement_two
+    end
+
+    it 'becomes invalid due to insufficient products' do
+      expect(@order).to_not be_valid
+    end
+  end
 end
