@@ -53,7 +53,7 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
       product_one = FactoryGirl.create :product
       product_two = FactoryGirl.create :product
       order_params = {
-        product_ids: [product_one.id, product_two.id]
+        product_ids_and_quantities: [[product_one.id, 2], [product_two.id, 3]]
       }
       post :create, params: {
         user_id: current_user.id,
@@ -64,6 +64,11 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
     it 'returns the just user order record' do
       order_response = json_response
       expect(order_response[:id]).to be_present
+    end
+
+    it 'embeds the two product objects related to the order' do
+      order_response = json_response
+      expect(order_response[:products].size).to eql 2
     end
 
     it { should respond_with 201 }
@@ -79,6 +84,22 @@ RSpec.describe Api::V1::OrdersController, type: :controller do
 
     it 'returns the total amount to pay for the products' do
       expect{ @order.set_total! }.to change{ @order.total }.from(0).to(185)
+    end
+  end
+
+  describe '#build_order_from_stock' do
+    before(:each) do
+      product_one = FactoryGirl.create :product, price: 100, quantity: 5
+      product_two = FactoryGirl.create :product, price: 85, quantity: 10
+
+      @product_ids_and_quantities = [[product_one.id, 2], [product_two.id, 3]]
+    end
+
+    it 'builds 2 placements for the order' do
+      order = Order.new
+      expect{
+        order.build_order_from_stock(@product_ids_and_quantities)
+      }.to change{ order.placements.size }.from(0).to(2)
     end
   end
 end
